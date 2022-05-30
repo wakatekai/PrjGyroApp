@@ -7,13 +7,13 @@
 #include "led_control.h"
 #include "sensor_control.h"
 
-#define TIMER_INTERVAL  10  // タイマーインターバル[ms]
+#define TIMER_INTERVAL  2  // タイマーインターバル[ms]
 
-#define INTERVAL_SERIAL ((u16)100) // 必ずTIMER_INTERVALの倍数になるように設定すること
-#define INTERVAL_LED    ((u16)200)
-#define INTERVAL_SENSOR ((u16)200)
-#define OFFSET_SERIAL   ((u16)0)
-#define OFFSET_LED      ((u16)0)
+#define INTERVAL_SERIAL ((u16)20) // 必ずTIMER_INTERVALの倍数になるように設定すること
+#define INTERVAL_LED    ((u16)50)
+#define INTERVAL_SENSOR ((u16)20)
+#define OFFSET_SERIAL   ((u16)4)
+#define OFFSET_LED      ((u16)10)
 #define OFFSET_SENSOR   ((u16)0)
 
 SCH_COUNTER cnt_serial;
