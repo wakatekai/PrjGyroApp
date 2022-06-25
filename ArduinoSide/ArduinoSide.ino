@@ -8,5 +8,5 @@ void setup() {
 }
 
 void loop() {
-    scheduler_exec();
+    scheduler_main();
 }
