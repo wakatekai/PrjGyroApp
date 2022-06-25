@@ -19,19 +19,20 @@ typedef struct _sch_counter {
 /////////////////////////// 定数定義 ///////////////////////////
 #define TIMER_INTERVAL  2  // タイマーインターバル[ms]
 
-#define INTERVAL_SERIAL ((u16)20) // 必ずTIMER_INTERVALの倍数になるように設定すること
-#define INTERVAL_LED    ((u16)50)
-#define INTERVAL_SENSOR ((u16)20)
-#define OFFSET_SERIAL   ((u16)4)
-#define OFFSET_LED      ((u16)10)
-#define OFFSET_SENSOR   ((u16)0)
+// 必ずTIMER_INTERVALの倍数になるように設定すること
+#define INTERVAL_SERIAL ((u16)20) // シリアル通信用制御周期 [ms]
+#define INTERVAL_LED    ((u16)50) // LED制御用制御周期 [ms]
+#define INTERVAL_SENSOR ((u16)20) // センサ用制御周期 [ms]
+#define OFFSET_SERIAL   ((u16)4)  // シリアル通信用 実行タイミングオフセット [ms]
+#define OFFSET_LED      ((u16)10) // LED制御用 実行タイミングオフセット [ms]
+#define OFFSET_SENSOR   ((u16)0)  // センサ用 実行タイミングオフセット [ms]
 
 /////////////////////////// 外部公開変数 ///////////////////////////
 
 /////////////////////////// 内部公開変数 ///////////////////////////
-static SCH_COUNTER cnt_serial;
-static SCH_COUNTER cnt_led;
-static SCH_COUNTER cnt_sensor;
+static SCH_COUNTER cnt_serial;  // シリアル通信用カウンタ
+static SCH_COUNTER cnt_led;     // LED制御用カウンタ
+static SCH_COUNTER cnt_sensor;  // センサ制御用カウンタ
 
 /////////////////////////// 関数プロトタイプ宣言 ///////////////////////////
 void sheduler_timer();  // Arduinoのタイマーによって周期的に起動される関数
