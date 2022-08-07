@@ -11,6 +11,6 @@ void sensor_value_send(float,float);
 // MPU-6050のアドレス、レジスタ設定値
 #define MPU6050_WHO_AM_I     0x75  // Read Only
 #define MPU6050_PWR_MGMT_1   0x6B  // Read and Write
-#define MPU_ADDRESS  0x68
+#define MPU_ADDRESS   0x68
 
 #endif

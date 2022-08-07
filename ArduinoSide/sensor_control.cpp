@@ -63,5 +63,4 @@ void sensor_main() {
 void sensor_value_send(float send_vertical,float send_horizontal) {
 
 
-
 }
