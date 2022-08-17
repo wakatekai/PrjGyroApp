@@ -20,9 +20,9 @@ typedef struct _sch_counter {
 #define TIMER_INTERVAL  2  // タイマーインターバル[ms]
 
 // 必ずTIMER_INTERVALの倍数になるように設定すること
-#define INTERVAL_SERIAL ((u16)20) // シリアル通信用制御周期 [ms]
+#define INTERVAL_SERIAL ((u16)10) // シリアル通信用制御周期 [ms]
 #define INTERVAL_LED    ((u16)50) // LED制御用制御周期 [ms]
-#define INTERVAL_SENSOR ((u16)20) // センサ用制御周期 [ms]
+#define INTERVAL_SENSOR ((u16)10) // センサ用制御周期 [ms]
 #define OFFSET_SERIAL   ((u16)4)  // シリアル通信用 実行タイミングオフセット [ms]
 #define OFFSET_LED      ((u16)10) // LED制御用 実行タイミングオフセット [ms]
 #define OFFSET_SENSOR   ((u16)0)  // センサ用 実行タイミングオフセット [ms]
@@ -31,7 +31,7 @@ typedef struct _sch_counter {
 
 /////////////////////////// 内部公開変数 ///////////////////////////
 static SCH_COUNTER cnt_serial;  // シリアル通信用カウンタ
-static SCH_COUNTER cnt_led;     // LED制御用カウンタ
+//static SCH_COUNTER cnt_led;     // LED制御用カウンタ
 static SCH_COUNTER cnt_sensor;  // センサ制御用カウンタ
 
 /////////////////////////// 関数プロトタイプ宣言 ///////////////////////////
@@ -55,7 +55,7 @@ void scheduler_setup() {
     
     // 各領域用のカウンタの初期化
     init_counter(&cnt_serial, INTERVAL_SERIAL, OFFSET_SERIAL, serial_main); // シリアル通信用
-    init_counter(&cnt_led, INTERVAL_LED, OFFSET_LED, led_main);             // LED制御用
+    //init_counter(&cnt_led, INTERVAL_LED, OFFSET_LED, led_main);             // LED制御用
     init_counter(&cnt_sensor, INTERVAL_SENSOR, OFFSET_SENSOR, sensor_main); // ジャイロセンサ用
 
     // タイマーの設定と起動
@@ -72,7 +72,7 @@ void scheduler_setup() {
 //////////////////////////////////////////////////////////////////////////////////// */
 void sheduler_timer() {
     countup(&cnt_serial); // シリアル通信用
-    countup(&cnt_led);    // LED制御用
+  //  countup(&cnt_led);    // LED制御用
     countup(&cnt_sensor); // センサ用
 }
 
@@ -85,7 +85,7 @@ void sheduler_timer() {
 //////////////////////////////////////////////////////////////////////////////////// */
 void scheduler_main() {
     runjudge(&cnt_serial);  // シリアル通信用
-    runjudge(&cnt_led);     // LED制御用
+ //   runjudge(&cnt_led);     // LED制御用
     runjudge(&cnt_sensor);  // センサ用
 }
 
