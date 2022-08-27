@@ -4,9 +4,17 @@
 #ifndef __SENSOR_CONTROL_H__
 #define __SENSOR_CONTROL_H__
 
+
+typedef struct{
+    float vertical;   //縦向きの操作 -180～180°
+    float horizontal; //横向きの操作 -180～180°
+}st_t;
+
+
 void sensor_setup();
 void sensor_main();
-void sensor_value_send(float,float);
+st_t sensor_value_send(float,float);
+
 
 // MPU-6050のアドレス、レジスタ設定値
 #define MPU6050_WHO_AM_I     0x75  // Read Only

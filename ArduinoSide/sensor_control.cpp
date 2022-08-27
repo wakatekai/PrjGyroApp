@@ -1,11 +1,6 @@
 #include <Arduino.h>
 #include "common.h"
-//#include <Keyboard.h>
-//#include <Wire.h>
-// MPU-6050のアドレス、レジスタ設定値
-//#define MPU6050_WHO_AM_I     0x75  // Read Only
-//#define MPU6050_PWR_MGMT_1   0x6B  // Read and Write
-//#define MPU_ADDRESS  0x68
+
 
 void sensor_setup() {
 	// デバイス初期化時に実行される
@@ -28,6 +23,8 @@ void sensor_setup() {
 }
 
 void sensor_main() {
+	
+	st_t sv;	//送信用データ関数呼び出し用
 
 	Wire.beginTransmission(0x68);
 	Wire.write(0x3B);
@@ -54,13 +51,18 @@ void sensor_main() {
 	float gyro_y = gyRaw / 131.0;
 	float gyro_z = gzRaw / 131.0;
 
-	float vertical = atan(acc_x/acc_z) * (180 / M_PI);      //縦向きの操作
-	float horizontal = atan(acc_y/acc_z) * (180 / M_PI);    //横向きの操作
+	float vertical = atan(acc_x/acc_z) * (180 / M_PI);      //縦向きの操作 -180～180°
+	float horizontal = atan(acc_y/acc_z) * (180 / M_PI);    //横向きの操作 -180～180°
 
-	sensor_value_send(vertical, horizontal);
+	sv = sensor_value_send(vertical, horizontal);
 }
 
-void sensor_value_send(float send_vertical,float send_horizontal) {
+st_t sensor_value_send(float send_vertical,float send_horizontal) {
 
-
+	st_t sv;
+	
+	sv.vertical = send_vertical;			//送信用データ＿縦向きの操作 -180～180°
+	sv.horizontal = send_horizontal;		//送信用データ＿横向きの操作 -180～180°
+	
+	return sv;
 }
