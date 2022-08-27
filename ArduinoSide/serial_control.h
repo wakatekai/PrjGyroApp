@@ -10,10 +10,10 @@ void serial_main();
 #define 10 TEN_MULT
 #define 8 ONE_BYTE
 enum typedef{
-    ANGLE_X_L;
     ANGLE_X_H;
-    ANGLE_Y_L;
+    ANGLE_X_L;
     ANGLE_Y_H;
+    ANGLE_Y_L;
     CHECKSUM;
     FRAME_LENGTH;
 }

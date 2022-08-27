@@ -17,17 +17,17 @@ void serial_main() {
     Angle_x_old = sv.horizontal;
     Angle_x_old = (Angle_x_old * TEN_MULT) + OFFSET;
     Angle_x = (unsigned short)Angle_x_old;
-    senddate[ANGLE_X_L] = (unsigned char)Angle_x;
     senddate[ANGLE_X_H] = (unsigned char)(Angle_x >> ONE_BYTE);
+    senddate[ANGLE_X_L] = (unsigned char)Angle_x;
 
     Angle_y_old = sv.vertical;
     Angle_y_old = (Angle_y_old * TEN_MULT) + OFFSET;
     Angle_y = (unsigned short)Angle_y_old;
-    senddate[ANGLE_Y_L] = (unsigned char)Angle_y;
     senddate[ANGLE_Y_H] = (unsigned char)(Angle_y >> ONE_BYTE);
+    senddate[ANGLE_Y_L] = (unsigned char)Angle_y;
 
     //チェックサム
-    for(int i = ANGLE_X_L; i < FRAME_LENGTH; i++){
+    for(int i = ANGLE_X_H; i < FRAME_LENGTH; i++){
       senddate[CHECKSUM] += senddate[i];
     }
 
