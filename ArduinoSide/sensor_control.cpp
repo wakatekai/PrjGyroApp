@@ -1,30 +1,30 @@
 #include <Arduino.h>
 #include "common.h"
-
+#include "sensor_control.h"
 
 void sensor_setup() {
-	// ƒfƒoƒCƒX‰Šú‰»‚ÉÀs‚³‚ê‚é
+	// ï¿½fï¿½oï¿½Cï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½
 	Wire.begin();
 
-	// PC‚Æ‚Ì’ÊM‚ğŠJn
+	// PCï¿½Æ‚Ì’ÊMï¿½ï¿½ï¿½Jï¿½n
 	Serial.begin(115200); //115200bps
  
-	// ‰‰ñ‚Ì“Ç‚İo‚µ
+	// ï¿½ï¿½ï¿½ï¿½Ì“Ç‚İoï¿½ï¿½
 	Wire.beginTransmission(MPU_ADDRESS);
 	Wire.write(MPU6050_WHO_AM_I);  //MPU6050_PWR_MGMT_1
 	Wire.write(0x00);
 	Wire.endTransmission();
 
-	// “®ìƒ‚[ƒh‚Ì“Ç‚İo‚µ
+	// ï¿½ï¿½ï¿½ìƒ‚ï¿½[ï¿½hï¿½Ì“Ç‚İoï¿½ï¿½
 	Wire.beginTransmission(MPU_ADDRESS);
-	Wire.write(MPU6050_PWR_MGMT_1);  //MPU6050_PWR_MGMT_1ƒŒƒWƒXƒ^‚Ìİ’è
+	Wire.write(MPU6050_PWR_MGMT_1);  //MPU6050_PWR_MGMT_1ï¿½ï¿½ï¿½Wï¿½Xï¿½^ï¿½Ìİ’ï¿½
 	Wire.write(0x00);
 	Wire.endTransmission();
 }
 
 void sensor_main() {
 	
-	st_t sv;	//‘—M—pƒf[ƒ^ŠÖ”ŒÄ‚Ño‚µ—p
+	st_t sv;	//ï¿½ï¿½ï¿½Mï¿½pï¿½fï¿½[ï¿½^ï¿½Öï¿½ï¿½Ä‚Ñoï¿½ï¿½ï¿½p
 
 	Wire.beginTransmission(0x68);
 	Wire.write(0x3B);
@@ -41,18 +41,18 @@ void sensor_main() {
 	gyRaw = Wire.read() << 8 | Wire.read();
 	gzRaw = Wire.read() << 8 | Wire.read();
 
-	// ‰Á‘¬“x’l‚ğ•ª‰ğ”\‚ÅŠ„‚Á‚Ä‰Á‘¬“x(G)‚É•ÏŠ·‚·‚é
+	// ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½lï¿½ğ•ª‰ï¿½\ï¿½ÅŠï¿½ï¿½ï¿½ï¿½Ä‰ï¿½ï¿½ï¿½ï¿½x(G)ï¿½É•ÏŠï¿½ï¿½ï¿½ï¿½ï¿½
 	float acc_x = axRaw / 16384.0;  //FS_SEL_0 16,384 LSB / g
 	float acc_y = ayRaw / 16384.0;
 	float acc_z = azRaw / 16384.0;
 
-	// Šp‘¬“x’l‚ğ•ª‰ğ”\‚ÅŠ„‚Á‚ÄŠp‘¬“x(degrees per sec)‚É•ÏŠ·‚·‚é
-	float gyro_x = gxRaw / 131.0;//FS_SEL_0 131 LSB / (‹/s)
+	// ï¿½pï¿½ï¿½ï¿½xï¿½lï¿½ğ•ª‰ï¿½\ï¿½ÅŠï¿½ï¿½ï¿½ï¿½ÄŠpï¿½ï¿½ï¿½x(degrees per sec)ï¿½É•ÏŠï¿½ï¿½ï¿½ï¿½ï¿½
+	float gyro_x = gxRaw / 131.0;//FS_SEL_0 131 LSB / (ï¿½ï¿½/s)
 	float gyro_y = gyRaw / 131.0;
 	float gyro_z = gzRaw / 131.0;
 
-	float vertical = atan(acc_x/acc_z) * (180 / M_PI);      //cŒü‚«‚Ì‘€ì -180`180‹
-	float horizontal = atan(acc_y/acc_z) * (180 / M_PI);    //‰¡Œü‚«‚Ì‘€ì -180`180‹
+	float vertical = atan(acc_x/acc_z) * (180 / M_PI);      //ï¿½cï¿½ï¿½ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½ï¿½ -180ï¿½`180ï¿½ï¿½
+	float horizontal = atan(acc_y/acc_z) * (180 / M_PI);    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½ï¿½ -180ï¿½`180ï¿½ï¿½
 
 	sv = sensor_value_send(vertical, horizontal);
 }
@@ -61,8 +61,8 @@ st_t sensor_value_send(float send_vertical,float send_horizontal) {
 
 	st_t sv;
 	
-	sv.vertical = send_vertical;			//‘—M—pƒf[ƒ^QcŒü‚«‚Ì‘€ì -180`180‹
-	sv.horizontal = send_horizontal;		//‘—M—pƒf[ƒ^Q‰¡Œü‚«‚Ì‘€ì -180`180‹
+	sv.vertical = send_vertical;			//ï¿½ï¿½ï¿½Mï¿½pï¿½fï¿½[ï¿½^ï¿½Qï¿½cï¿½ï¿½ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½ï¿½ -180ï¿½`180ï¿½ï¿½
+	sv.horizontal = send_horizontal;		//ï¿½ï¿½ï¿½Mï¿½pï¿½fï¿½[ï¿½^ï¿½Qï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½ï¿½ -180ï¿½`180ï¿½ï¿½
 	
 	return sv;
 }
