@@ -6,8 +6,8 @@
 
 
 typedef struct{
-    float vertical;   //cŒü‚«‚Ì‘€ì -180`180‹
-    float horizontal; //‰¡Œü‚«‚Ì‘€ì -180`180‹
+    float vertical;   //é€ä¿¡ãƒ‡ãƒ¼ã‚¿ç¸¦å‘ãè§’åº¦ -180Â°ï½180Â°
+    float horizontal; //é€ä¿¡ãƒ‡ãƒ¼ã‚¿æ¨ªå‘ãè§’åº¦ -180Â°ï½180Â°
 }st_t;
 
 
@@ -16,7 +16,7 @@ void sensor_main();
 st_t sensor_value_send(float,float);
 
 
-// MPU-6050‚ÌƒAƒhƒŒƒXAƒŒƒWƒXƒ^İ’è’l
+// MPU-6050ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã€ãƒ¬ã‚¸ã‚¹ã‚¿è¨­å®šå€¤
 #define MPU6050_WHO_AM_I     0x75  // Read Only
 #define MPU6050_PWR_MGMT_1   0x6B  // Read and Write
 #define MPU_ADDRESS   0x68
