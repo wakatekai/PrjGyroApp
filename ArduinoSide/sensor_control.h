@@ -13,7 +13,7 @@ typedef struct{
 
 void sensor_setup();
 void sensor_main();
-st_t sensor_value_send(float,float);
+st_t sensor_value_send();
 
 
 // MPU-6050のアドレス、レジスタ設定値
