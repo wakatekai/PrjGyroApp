@@ -1,8 +1,10 @@
 #include <Arduino.h>
 #include "common.h"
+#include "serial_control.h"
+#include "sensor_control.h"
 
 void serial_setup() {
-  // PC‚Æ‚Ì’ÊM‚ğŠJn
+  // PCã¨ã®é€šä¿¡ã‚’é–‹å§‹
   Serial.begin(BPS); //115200bps  
 }
 
@@ -10,10 +12,12 @@ void serial_main() {
     float Angle_y_old,Angle_x_old;
     unsigned short Angle_y,Angle_x;
     unsigned char senddate[5];
+    st_t sv;
+    sv = sensor_value_send();
 
-    //Œ^•ÏŠ·‚µ‚Ä10”{‚µ‚ÄƒIƒtƒZƒbƒg‚·‚éˆ—
-    //ƒIƒtƒZƒbƒg‚Å-180~180‚©‚ç0~3600‚ÉBƒI[ƒo[ƒtƒ[‚µ‚È‚¢‚½‚ßB
-    //æ‚É10”{‚µ‚Ä‚©‚ç®”‚É•ÏŠ·‚µ‚È‚¢‚ÆA—á‚¦‚Î179.9‚ğó‚¯æ‚Á‚½ê‡‚Éæ‚É®”‚É•ÏŠ·‚³‚ê‚Ä180‚â179‚É‚È‚Á‚Ä‚©‚çTEN_MULT”{‚·‚é‚Æ1799‚É‚È‚ç‚È‚¢‚½‚ßB
+    //å‹å¤‰æ›ã—ã¦10å€ã—ã¦ã‚ªãƒ•ã‚»ãƒƒãƒˆã™ã‚‹å‡¦ç†
+    //ã‚ªãƒ•ã‚»ãƒƒãƒˆã§-180~180ã‹ã‚‰0~3600ã«ã€‚ã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ­ãƒ¼ã—ãªã„ãŸã‚ã€‚
+    //å…ˆã«10å€ã—ã¦ã‹ã‚‰æ•´æ•°ã«å¤‰æ›ã—ãªã„ã¨ã€ä¾‹ãˆã°179.9ã‚’å—ã‘å–ã£ãŸå ´åˆã«å…ˆã«æ•´æ•°ã«å¤‰æ›ã•ã‚Œã¦180ã‚„179ã«ãªã£ã¦ã‹ã‚‰TEN_MULTå€ã™ã‚‹ã¨1799ã«ãªã‚‰ãªã„ãŸã‚ã€‚
     Angle_x_old = sv.horizontal;
     Angle_x_old = (Angle_x_old * TEN_MULT) + OFFSET;
     Angle_x = (unsigned short)Angle_x_old;
@@ -26,14 +30,12 @@ void serial_main() {
     senddate[ANGLE_Y_H] = (unsigned char)(Angle_y >> ONE_BYTE);
     senddate[ANGLE_Y_L] = (unsigned char)Angle_y;
 
-    //ƒ`ƒFƒbƒNƒTƒ€
+    //ãƒã‚§ãƒƒã‚¯ã‚µãƒ 
     for(int i = ANGLE_X_H; i < FRAME_LENGTH; i++){
       senddate[CHECKSUM] += senddate[i];
     }
 
-    //‘—Mƒf[ƒ^
-    Serial.Write(senddate,FRAME_LENGTH);
-
-    return 0;
+    //é€ä¿¡ãƒ‡ãƒ¼ã‚¿
+    Serial.write(senddate,FRAME_LENGTH);
 }
 
