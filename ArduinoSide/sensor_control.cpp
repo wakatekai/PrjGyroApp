@@ -2,6 +2,8 @@
 #include "common.h"
 #include "sensor_control.h"
 
+st_t sv;	//送信データセット用
+
 void sensor_setup() {
 	// デバイス初期化時に実行される
 	Wire.begin();
@@ -23,8 +25,7 @@ void sensor_setup() {
 }
 
 void sensor_main() {
-	
-	st_t sv;	//送信データセット用
+
 
 	Wire.beginTransmission(0x68);
 	Wire.write(0x3B);
@@ -51,18 +52,13 @@ void sensor_main() {
 	float gyro_y = gyRaw / 131.0;
 	float gyro_z = gzRaw / 131.0;
 
-	float vertical = atan(acc_x/acc_z) * (180 / M_PI);      //縦向きの操作
-	float horizontal = atan(acc_y/acc_z) * (180 / M_PI);    //横向きの操作
+	sv.vertical = atan(acc_x/acc_z) * (180 / M_PI);      //縦向きの操作
+	sv.horizontal = atan(acc_y/acc_z) * (180 / M_PI);    //横向きの操作
 
-	sv = sensor_value_send(vertical, horizontal);
 }
 
-st_t sensor_value_send(float send_vertical,float send_horizontal) {
-
-	st_t sv;
-	
-	sv.vertical = send_vertical;			//縦向きの値
-	sv.horizontal = send_horizontal;		//横向きの値
+st_t sensor_value_send() {
 	
 	return sv;
+
 }
