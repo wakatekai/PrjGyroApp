@@ -1,6 +1,7 @@
 # ビー玉迷路ゲーム
 from direct.showbase.ShowBase import ShowBase
 import sys
+import serial
 
 # テキスト表示
 from direct.gui.OnscreenText import OnscreenText
@@ -31,6 +32,18 @@ from panda3d.core import CollisionBox, Point3
 from panda3d.core import AmbientLight, DirectionalLight
 from panda3d.core import Material
 
+#シリアル通信
+SERIAL_COM = "COM3"
+SERIAL_BPS = 115200
+
+SERIAL_DATA_SIZE = 5
+
+# グローバル変数の定義
+sdata_list = []
+angle_x = 0
+angle_y = 0
+
+
 class BallInMazeDemo(ShowBase):
 	# init関数の定義
 	def __init__(self):
@@ -40,7 +53,7 @@ class BallInMazeDemo(ShowBase):
 
 		# カメラの設定
 		self.disableMouse()	# カメラマウス制御 OFF
-		camera.setPosHpr(11, -11, 25, 45, -60, 0)	# カメラの位置
+		camera.setPosHpr(0, -9, 23, 0, -70, 0)	# カメラの位置
 
 		# Escキーでプログラムの終了
 		self.accept("escape", sys.exit)
@@ -60,7 +73,7 @@ class BallInMazeDemo(ShowBase):
 
 		# サブタイトル文字を表示する
 		self.instructions = \
-			OnscreenText(text="マウスを動かすと迷路を傾けることができます",
+			OnscreenText(text="ジャイロセンサを動かすと迷路を傾けることができます",
 						 parent=base.a2dTopLeft, align=TextNode.ALeft,
 						 fg=(1, 1, 1, 1), pos=(0.1, -0.15), scale=.06, font=font,
 						 shadow=(0, 0, 0, 0.5))
@@ -133,6 +146,12 @@ class BallInMazeDemo(ShowBase):
 		m.setShininess(96)
 		self.ball.setMaterial(m, 1)
 
+		# シリアル通信の初期化
+		self.ser = serial.Serial(SERIAL_COM, SERIAL_BPS, timeout=0.000001)
+		angle_x = 0
+		angle_y = 0
+		sdata_list.clear()
+
 		# start関数の呼び出し
 		self.start()
 
@@ -144,6 +163,9 @@ class BallInMazeDemo(ShowBase):
 		self.ballRoot.setPos(startPos)
 		self.ballV = LVector3(0, 0, 0)
 		self.accelV = LVector3(0, 0, 0)
+		
+		# シリアル通信の入力バッファをクリアする
+		self.ser.reset_input_buffer()
 
 		# rollTask関数の呼び出し
 		taskMgr.remove("rollTask")
@@ -179,11 +201,19 @@ class BallInMazeDemo(ShowBase):
 		newRot = LRotationf(axis, 45.5 * dt * self.ballV.length())
 		self.ball.setQuat(prevRot * newRot)
 
+		# シリアル通信データの取得
+		self.getSerialData()
+		self.getXYData()
+		# print(angle_x, ',', angle_y)
+		self.maze.setP(angle_y)
+		self.maze.setR(angle_x)
+
 		# 迷路の傾きのマウス操作
-		if base.mouseWatcherNode.hasMouse():
-			mpos = base.mouseWatcherNode.getMouse()
-			self.maze.setP(mpos.getY() * -10)
-			self.maze.setR(mpos.getX() * 10)
+		#if base.mouseWatcherNode.hasMouse():
+			#mpos = base.mouseWatcherNode.getMouse()
+			#self.maze.setP(mpos.getY() * -10)
+			#self.maze.setR(mpos.getX() * 10)
+			
 
 		return task.cont
 
@@ -238,6 +268,39 @@ class BallInMazeDemo(ShowBase):
 		toPos = entry.getInteriorPoint(render)
 		self.ballRoot.hide()
 		taskMgr.remove('rollTask')
+	
+	# シリアル通信データの取得
+	def getSerialData(self):
+		while True:
+			#self.ser.reset_input_buffer()
+			sbuff = self.ser.read()	# 1Byteずつ読み出し
+			if sbuff == b'':
+				break
+
+			sdata_list.append(int.from_bytes(sbuff, 'big'))	# 配列の末尾に追加
+			if len(sdata_list) > 9:	# 配列の要素数が9より大きい場合
+				sdata_list.pop(0)	# 配列の先頭を削除
+
+	# 受信したデータからX軸・Y軸情報を抽出
+	def getXYData(self):
+		global angle_x
+		global angle_y
+		if len(sdata_list) == 9:
+			for i in reversed(range(5)):		#4, 3, 2, 1, 0の順
+				result = self.checkChkSum(*sdata_list[i:(i + 5)])
+				if result == True:
+					angle_x = (((sdata_list[i] << 8) + sdata_list[i + 1]) - 1800) / 10
+					angle_y = (((sdata_list[i + 2] << 8) + sdata_list[i + 3]) - 1800) /10
+					break
+
+	# チェックサムチェック
+	def checkChkSum(self, *args):
+		if args[4] == (sum(args[0:4]) & 255):	#データ部(4Byte)の合計とChkSumが一致するか？
+			ret = True
+		else:
+			ret = False
+		return ret
+
 
 game = BallInMazeDemo()
 game.run()
