@@ -1,4 +1,4 @@
-#include <Keyboard.h>
+//#include <Keyboard.h>
 #include <Wire.h>
 
 #ifndef __SENSOR_CONTROL_H__

@@ -11,31 +11,31 @@ void serial_setup() {
 void serial_main() {
     float Angle_y_old,Angle_x_old;
     unsigned short Angle_y,Angle_x;
-    unsigned char senddate[5];
+    unsigned char senddata[5];
     st_t sv;
     sv = sensor_value_send();
 
     //型変換して10倍してオフセットする処理
     //オフセットで-180~180から0~3600に。オーバーフローしないため。
     //先に10倍してから整数に変換しないと、例えば179.9を受け取った場合に先に整数に変換されて180や179になってからTEN_MULT倍すると1799にならないため。
-    Angle_x_old = sv.horizontal;
+    Angle_x_old = sv.vertical;
     Angle_x_old = (Angle_x_old * TEN_MULT) + OFFSET;
     Angle_x = (unsigned short)Angle_x_old;
-    senddate[ANGLE_X_H] = (unsigned char)(Angle_x >> ONE_BYTE);
-    senddate[ANGLE_X_L] = (unsigned char)Angle_x;
+    senddata[ANGLE_X_H] = (unsigned char)(Angle_x >> ONE_BYTE);
+    senddata[ANGLE_X_L] = (unsigned char)Angle_x;
 
-    Angle_y_old = sv.vertical;
+    Angle_y_old = sv.horizontal;
     Angle_y_old = (Angle_y_old * TEN_MULT) + OFFSET;
     Angle_y = (unsigned short)Angle_y_old;
-    senddate[ANGLE_Y_H] = (unsigned char)(Angle_y >> ONE_BYTE);
-    senddate[ANGLE_Y_L] = (unsigned char)Angle_y;
+    senddata[ANGLE_Y_H] = (unsigned char)(Angle_y >> ONE_BYTE);
+    senddata[ANGLE_Y_L] = (unsigned char)Angle_y;
 
     //チェックサム
-    for(int i = ANGLE_X_H; i < FRAME_LENGTH; i++){
-      senddate[CHECKSUM] += senddate[i];
+    senddata[CHECKSUM] = 0;
+    for(int i = ANGLE_X_H; i < CHECKSUM; i++){
+      senddata[CHECKSUM] += senddata[i];
     }
 
     //送信データ
-    Serial.write(senddate,FRAME_LENGTH);
+    Serial.write(senddata,FRAME_LENGTH);
 }
-
